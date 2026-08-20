@@ -91,6 +91,31 @@ func (s *Service) CheckSubsidyClaim(_ context.Context, claim SubsidyClaim, store
 	return ValidateSubsidyClaim(claim, store, license, s.now())
 }
 
+func (s *Service) MergeCampaignSKUs(_ context.Context, existing, incoming []string) []string {
+	return MergeFeaturedSKUs(existing, incoming)
+}
+
+func (s *Service) LicenseRegions(ctx context.Context, licenseID string) ([]string, error) {
+	license, ok, err := s.registry.License(ctx, licenseID)
+	if err != nil {
+		return nil, err
+	}
+	if !ok {
+		return nil, fmt.Errorf("%w: license %s not found", ErrInvalidLicense, licenseID)
+	}
+	return slices.Clone(license.RegionCodes), nil
+}
+
+func (s *Service) AcknowledgeRecall(_ context.Context, recall Recall, storeID string) (Recall, error) {
+	if !slices.Contains(recall.AffectedStores, storeID) {
+		return Recall{}, fmt.Errorf("%w: store %s is not affected", ErrRecallIncomplete, storeID)
+	}
+	if !slices.Contains(recall.Acknowledged, storeID) {
+		recall.Acknowledged = append(slices.Clone(recall.Acknowledged), storeID)
+	}
+	return recall, nil
+}
+
 func (s *Service) ActivateLicense(ctx context.Context, license BrandLicense, store StoreProfile) (BrandLicense, error) {
 	if err := ValidateThreeStoreModel(store); err != nil {
 		return BrandLicense{}, err
