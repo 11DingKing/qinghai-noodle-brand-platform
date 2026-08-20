@@ -19,6 +19,78 @@ func NewService(registry *Registry, now func() time.Time) *Service {
 	return &Service{registry: registry, now: now}
 }
 
+func (s *Service) CheckThreeStoreModel(_ context.Context, store StoreProfile) error {
+	return ValidateThreeStoreModel(store)
+}
+
+func (s *Service) CheckLogo(_ context.Context, license BrandLicense, store StoreProfile) error {
+	return ValidateLogoVersion(license, store)
+}
+
+func (s *Service) CheckMenuName(_ context.Context, store StoreProfile) error {
+	return ValidateMenuBrandName(store)
+}
+
+func (s *Service) CheckOperatorTraining(_ context.Context, store StoreProfile, course string) error {
+	return ValidateOperatorTraining(store, course, s.now())
+}
+
+func (s *Service) CheckTransfer(_ context.Context, license BrandLicense, currentOwner, proposedOwner string) error {
+	return ValidateLicenseTransfer(license, currentOwner, proposedOwner)
+}
+
+func (s *Service) CheckBroth(_ context.Context, batch BrothBatch, lots map[string]IngredientLot) error {
+	return ValidateBrothBatch(batch, lots)
+}
+
+func (s *Service) CheckChiliOil(_ context.Context, batch ChiliOilBatch, chili, oil IngredientLot) error {
+	return ValidateChiliOil(batch, chili, oil)
+}
+
+func (s *Service) CheckSupplierCertificate(_ context.Context, lot IngredientLot, certificate SupplierCertificate) error {
+	return ValidateSupplierCertificate(lot, certificate, s.now())
+}
+
+func (s *Service) CheckColdChain(_ context.Context, lot IngredientLot) error {
+	return ValidateColdChain(lot)
+}
+
+func (s *Service) CheckCorrectiveDeadline(_ context.Context, severity string, observedAt time.Time) (time.Time, error) {
+	return CorrectiveDeadline(severity, observedAt)
+}
+
+func (s *Service) CheckAppeal(_ context.Context, appeal Appeal, inspection Inspection) error {
+	return ValidateAppeal(appeal, inspection, s.now())
+}
+
+func (s *Service) CheckLotTrace(_ context.Context, lot IngredientLot, known map[string]IngredientLot) error {
+	return ValidateLotTrace(lot, known)
+}
+
+func (s *Service) CheckHighlandProduct(_ context.Context, listing ProductListing, lots map[string]IngredientLot) error {
+	return ValidateHighlandProduct(listing, lots)
+}
+
+func (s *Service) CheckListingPrices(_ context.Context, listing ProductListing) error {
+	return ValidateListingPrices(listing)
+}
+
+func (s *Service) CheckAvailableStock(_ context.Context, listing ProductListing) (int, error) {
+	return AvailableStock(listing)
+}
+
+func (s *Service) CheckCampaign(_ context.Context, campaign CultureCampaign, store StoreProfile, listings map[string]ProductListing) error {
+	return ValidateCampaign(campaign, store, listings, s.now())
+}
+
+func (s *Service) CheckDestinationCoverage(_ context.Context, campaign CultureCampaign, regions []string) error {
+	return ValidateDestinationCoverage(campaign, regions)
+}
+
+func (s *Service) CheckSubsidyClaim(_ context.Context, claim SubsidyClaim, store StoreProfile, license BrandLicense) error {
+	return ValidateSubsidyClaim(claim, store, license, s.now())
+}
+
 func (s *Service) ActivateLicense(ctx context.Context, license BrandLicense, store StoreProfile) (BrandLicense, error) {
 	if err := ValidateThreeStoreModel(store); err != nil {
 		return BrandLicense{}, err
