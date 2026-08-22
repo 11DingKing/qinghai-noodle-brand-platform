@@ -32,7 +32,10 @@ func (s *QueryService) GetItemDetail(ctx context.Context, id string) (*ItemDetai
 	}
 	assignments, err := s.store.GetAssignments(ctx, id)
 	if err != nil {
-		return nil, fmt.Errorf("get assignments: %w", err)
+		assignments = nil
+	}
+	if assignments == nil {
+		assignments = []*domain.Referral{}
 	}
 	escalations, err := s.store.GetEscalations(ctx, id)
 	if err != nil {
