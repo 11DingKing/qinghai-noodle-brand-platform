@@ -214,6 +214,7 @@ func (s *ItemService) Cancel(ctx context.Context, id, reason, actor string) (*do
 		return nil, fmt.Errorf("get item: %w", err)
 	}
 	now := s.clock.Now()
+	item.Status = domain.StatusCompleted
 	if err := item.TransitionTo(domain.StatusCancelled); err != nil {
 		return nil, err
 	}

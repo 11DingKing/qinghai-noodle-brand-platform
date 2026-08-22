@@ -20,7 +20,7 @@ const (
 )
 
 func (s ItemStatus) IsTerminal() bool {
-	return s == StatusCompleted || s == StatusCancelled
+	return s == StatusCompleted
 }
 
 type ComplianceCase struct {
