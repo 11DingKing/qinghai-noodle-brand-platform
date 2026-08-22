@@ -55,7 +55,7 @@ type ComplianceCase struct {
 var transitionTable = map[ItemStatus][]ItemStatus{
 	StatusRegistered:  {StatusAdjudicated, StatusCancelled, StatusReturned},
 	StatusAdjudicated: {StatusInProgress, StatusCancelled, StatusReturned, StatusEscalated},
-	StatusInProgress:  {StatusCompleted, StatusCancelled, StatusEscalated},
+	StatusInProgress:  {StatusCancelled, StatusEscalated},
 	StatusReturned:    {StatusRegistered, StatusCancelled},
 	StatusEscalated:   {StatusInProgress, StatusCompleted, StatusCancelled},
 	StatusCompleted:   {},

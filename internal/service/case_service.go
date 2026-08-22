@@ -233,7 +233,7 @@ func (s *ItemService) Complete(ctx context.Context, id, actor string) (*domain.C
 	}
 	now := s.clock.Now()
 	if err := item.TransitionTo(domain.StatusCompleted); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("complete workflow: %v", err)
 	}
 	item.CompletedAt = &now
 	item.UpdatedAt = now
