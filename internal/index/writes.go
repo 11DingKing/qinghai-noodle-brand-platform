@@ -9,7 +9,7 @@ import (
 )
 
 func (t *Tx) InsertItem(ctx context.Context, item *domain.ComplianceCase) error {
-	_, err := t.tx.ExecContext(ctx, `INSERT INTO items (
+	_, err := t.tx.ExecContext(ctx, `INSERT OR REPLACE INTO items (
 		id, external_ref, title, description, operator_name, operator_contact,
 		materials, category, keywords, status, lead_department, co_departments, rule_version,
 		registered_at, reported_by, deadline, escalation_level, store_id,
